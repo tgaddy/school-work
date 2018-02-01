@@ -1,0 +1,110 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1504\cocoasubrtf830
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 \\documentclass[a4paper]\{article\}\
+\
+%% Language and font encodings\
+\\usepackage[english]\{babel\}\
+\\usepackage[utf8x]\{inputenc\}\
+\\usepackage[T1]\{fontenc\}\
+\
+%% Sets page size and margins\
+\\usepackage[a4paper,top=3cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]\{geometry\}\
+\
+%% Useful packages\
+\\usepackage\{amsmath\}\
+\\usepackage\{graphicx\}\
+\\usepackage[colorinlistoftodos]\{todonotes\}\
+\\usepackage[colorlinks=true, allcolors=blue]\{hyperref\}\
+\\usepackage\{tcolorbox\}\
+\\usepackage\{bm\}\
+\
+\\title\{DD2434 Machine Learning, Advanced Course Assignment 1\}\
+\\author\{Thomas Gaddy\}\
+\
+\\begin\{document\}\
+\\maketitle\
+\
+\\begin\{abstract\}\
+In this assignment several different aspects of building models of data are examined. The first task consists of a supervised scenario involving a model of a specific relationship between two different domains. This is a very common problem where we have observations in one domain, say an image of a face and then wish to infer the identity of the person. The second task concerns unsupervised learning and how to learn a new representation of the data. This is related to finding hidden structures or patterns in the data which might contain important information. Finally, model selection is considered. This is very important as it gives us the tool to design different models and then choose the one that best represents our data. The important message that these exercises tries to convey is how we can integrate our beliefs with observations using a set of simple rules. \
+\\end\{abstract\}\
+\
+\\section\{The Prior \\texorpdfstring\{$p(\\mathbf\{X\}),  p(\\mathbf\{W\}),  p(f)$\}\{Lg\}\}\
+\
+\\subsection\{Theory\}\
+\
+We assume the following form of the likelihood: \
+\\begin\{equation\}\
+p(\\mathbf\{t\}_i|f,\\mathbf\{x\}_i) \\sim \\mathcal\{N\}(f(\\mathbf\{x\}_i),\\sigma^\{2\} \\mathbf\{I\})\\\
+\\end\{equation\}\
+\
+% QUESTION 1\
+\\begin\{tcolorbox\}\
+\\textbf\{Question 1: \}\\textit\{Why is a Gaussian likelihood a sensible choice? What does it mean that we have chosen a spherical covariance matrix for the likelihood?\}\
+\\end\{tcolorbox\}\
+\
+A Gaussian likelihood is sensible because if we assume that the noise around the target variables is due to various independently and identically distributed errors, then by the central limit theorem there will be a Gaussian distribution of noise, i.e. $\\epsilon \\sim \\mathcal\{N\}(0,\\sigma^\{2\})$. This means that the distribution around each target variable will be Gaussian with a mean equal to $f(\\mathbf\{x\}_i)$ and variance equal to the variance of the noise. Spherical covariance implies that there is no covariance between outputs (the elements of the $\\mathbf\{t\}_i$ vector) and that the variances are equal for each output. In other words, the noise around each output is independent and equal.\
+\\\\ \
+\
+% QUESTION 2\
+\\begin\{tcolorbox\}\
+\\textbf\{Question 2: \}\\textit\{If we do not assume that the data points are independent how would the likelihood look then? Remember that $\\mathbf\{T\} = [\\mathbf\{t\}_1,\\ldots,\\mathbf\{t\}_N]$\}\
+\\end\{tcolorbox\}\
+\
+If it is assumed that each output point is conditionally independent given the input and the mapping, then we can write the likelihood of the data as follows,\
+\\begin\{equation\}\
+p(\\mathbf\{T\}|f,\\mathbf\{X\}) = \\prod_i^n p(\\mathbf\{t\}_i|f,\\mathbf\{x\}_i)\\\
+\\end\{equation\}\
+\
+However, if we assume that each output point is not independent, we can determine the likelihood via the chain rule of probability:\
+\
+\\begin\{equation\}\
+p(\\mathbf\{T\}|f,\\mathbf\{X\}) = p(\\mathbf\{t\}_1|f,\\mathbf\{x\}_1)p(\\mathbf\{t\}_2|f,\\mathbf\{t\}_1,\\mathbf\{x\}_\{1:2\}) \\ldots p(\\mathbf\{t\}_N|f,\\mathbf\{t\}_\{1:N-1\},\\mathbf\{X\})\\\
+\\end\{equation\}\
+\
+We wish to find the mapping f from $\\mathbf\{x\}_i$ to $\\mathbf\{t\}_i$ from the observed data. More specifically, taking uncertainty into account, what we wish to reach is the posterior distribution over the mapping given the observations,\
+$$p(f|\\mathbf\{X\}, \\mathbf\{T\})$$\
+\
+\\subsubsection\{Linear Regression\}\
+% QUESTION 3\
+\\begin\{tcolorbox\}\
+\\textbf\{Question 3: \}\\textit\{What is the specific form of the likelihood below? Complete the right hand side of the expression in (4)\}\
+\\end\{tcolorbox\}\
+\
+If we make an assumption about the structure of noise in the observations such that $$\\mathbf\{t\}_i = \\mathbf\{Wx\}_i + \\bm\{\\epsilon\},$$ \
+where $\\bm\{\\epsilon\} \\sim \\mathcal\{N\}(0,\\sigma^\{2\})$ and that each out put point is conditionally independent, then we can formulate the likelihood of the data, \
+\
+\\begin\{equation\}\
+p(\\mathbf\{T\}|\\mathbf\{X\}, \\mathbf\{W\}) = \\prod_i^N \\mathcal\{N\}(\\mathbf\{Wx\}_i,\\sigma^\{2\}\\mathbf\{I\})\\\
+\\end\{equation\}\
+\
+\
+We would like to infer $\\mathbf\{W\}$ from the data. In order to do so, we must define a prior $p(\\mathbf\{W\})$ over the model parameters. A sensible choice would be to pick the conjugate prior, i.e. a Gaussian prior over the parameters,\
+\\begin\{equation\}\
+p(\\mathbf\{W\}) = \\mathcal\{N\}(\\mathbf\{W\}_0, \\tau^\{2\}\\mathbf\{I\}).\
+\\end\{equation\}\
+This prior distribution provides a valuable tool to tell us how likely a parameter is or "how far" it is from our belief. \
+\\\\\
+\
+% Question 4\
+\\begin\{tcolorbox\}\
+\\textbf\{Question 4: \}\\textit\{The prior in (5) is a spherical Gaussian. This means that the \'93preference\'94 is encoded in terms of a $L_2$ distance in the space of the parameters. With this view, how would the preference change if the preference was rather encoded using a $L_1$ norm? Compare and discuss the different type of solutions these two priors would encode\}\
+\\end\{tcolorbox\}\
+\
+The preference would be encoded via a Laplacian prior. This would result in the LASSO regularization for a point estimate versus the ridge regression obtained with a spherical Gaussian prior. This could also lead to a sparser model, as weight values can be driven to zero with an $L_1$ norm. This can be especially useful when inference is important, as irrelevant or less important input variables are not used. An $L_2$ regularization term would lead to smaller weights, but they would not be driven to zero. \
+\
+% Question 5\
+\\begin\{tcolorbox\}\
+\\textbf\{Question 5: \}\\textit\{Derive the posterior over the parameters. Please, do these calculations by hand as it is very good practice. However, in order to pass the assignment you only need to outline the calculation and highlight the important steps. You can make derivations for individual samples $(\\mathbf\{x\}_i,\\mathbf\{t\}_i)$ and then generalize to the dataset or operate on matrices keeping the concept of vectorization in mind.\}\
+\\flushleft \
+\\begin\{itemize\}\
+\\item Briefly comment/discuss the form (mean and covariance).\
+\\item What is the effect of the constant $Z$, are we interested in this?\
+\\end\{itemize\}\
+\\end\{tcolorbox\}\
+\
+The posterior is the object that integrates our prior belief with the data. }
